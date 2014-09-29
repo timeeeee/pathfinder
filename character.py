@@ -8,9 +8,8 @@ class Character:
         self.location = location
         # speed in pixels / second
         self.speed = 400
-        self.currentDestination = location
+        self.destination = location
         self.path = []
-        print("character created")
 
     # Create map creates a map based on character and obstacle locations,
     # and destination. Format is:
@@ -26,9 +25,9 @@ class Character:
     # findPath returns list of destinations on the shortest path from
     # first to last vertex of a map.
     def findPath(self, graph):
-        # placeholder, currently just returns last vertex
+        # placeholder, currently just returns list of last vertex
         # so the character will just travel in a straight line
-        return graph[-1][0]
+        return [graph[-1][0]]
 
     def goTo(self, destination, obstacles):
         self.path = self.findPath(self.generateMap(destination, obstacles))
@@ -38,21 +37,23 @@ class Character:
     def update(self, dTime):
         # coordinates are turned into tuples here before comparison, because if they
         # were passed as parameters earlier, they aren't guaranteed to be the same type
-        if tuple(self.location) == tuple(self.destination):
+        x, y = self.location
+        destinationX, destinationY = self.destination
+        if (x - destinationX)**2 + (y - destinationY)**2 < 2:
             if self.path: self.destination = self.path.pop(0)
         else:
             # move towards destination at self.speed pixels per second
-            x, y = self.location
-            destinationX, destinationY = self.destination
             vectorX = destinationX - x
             vectorY = destinationY - y
             length = sqrt(vectorX**2 + vectorY**2)
-            displacementX = int(vectoryX * dTime / length / 1000)
-            displacementY = int(vectoryY * dTime / length / 1000)
-            if displacementX > vectorX: 
+            displacementX = vectorX * self.speed * dTime / length / 1000
+            displacementY = vectorY * self.speed * dTime / length / 1000
+            if abs(displacementX) > abs(vectorX):
                 self.location = self.destination
             else:
                 self.location = (x + displacementX, y + displacementY)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (255, 0, 0), self.location, width = 4)
+        # x and y are probably floats
+        x, y = self.location
+        pygame.draw.circle(screen, (255, 0, 0), (int(x), int(y)), 4)
