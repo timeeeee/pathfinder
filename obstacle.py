@@ -8,7 +8,7 @@ class Obstacle(pygame.Rect):
         pygame.draw.rect(screen, (0,0,0), self)
 
     def getVertices(self):
-        inflated = self.inflate(5)
+        inflated = self.inflate(5, 5)
         return [inflated.topleft,
                 inflated.topright,
                 inflated.bottomleft,

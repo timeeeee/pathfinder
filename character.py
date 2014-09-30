@@ -33,12 +33,11 @@ class Character:
         self.path = self.findPath(self.generateMap(destination, obstacles))
         self.destination = self.path.pop(0)
 
-    # Move towards closest destination. If already there, continue following self.path
     def update(self, dTime):
-        # coordinates are turned into tuples here before comparison, because if they
-        # were passed as parameters earlier, they aren't guaranteed to be the same type
+        # Move towards closest destination. If already there, continue following self.path
         x, y = self.location
         destinationX, destinationY = self.destination
+        # We could say "self.location == self.destination" except self.location is probably floats
         if (x - destinationX)**2 + (y - destinationY)**2 < 2:
             if self.path: self.destination = self.path.pop(0)
         else:
