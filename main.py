@@ -1,13 +1,19 @@
 import pygame
 from pygame.locals import *
 from character import Character
+from obstacle import Obstacle
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((600, 400))
     screen.fill((255, 255, 255))
-    character = Character((100, 100))
     clock = pygame.time.Clock()
+
+    character = Character((100, 100))
+    obstacles = [Obstacle(200, 200, 100, 100),
+                 Obstacle(500, 300, 50, 50),
+                 Obstacle(50, 275, 50, 50),
+                 Obstacle(400, 50, 100, 100)]
     
     while True:
         dTime = clock.tick()
@@ -15,9 +21,10 @@ def main():
             if event.type == QUIT: return
             elif event.type == KEYDOWN and event.key == K_ESCAPE: return
             elif event.type == MOUSEBUTTONUP and event.button == 1:
-                character.goTo(event.pos, [])
+                character.goTo(event.pos, obstacles)
         character.update(dTime)
         screen.fill((255, 255, 255))
+        for obstacle in obstacles: obstacle.draw(screen)
         character.draw(screen)
         pygame.display.flip()
 
