@@ -1,4 +1,4 @@
-class node: 
+class Node: 
 
 	#The ever so sexy container for each vertex on graph
 
