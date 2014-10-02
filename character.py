@@ -27,7 +27,44 @@ class Character:
     def findPath(self, graph):
         # placeholder, currently just returns list of last vertex
         # so the character will just travel in a straight line
-        return [graph[-1][0]]
+
+	#----This first section executes dijkstra's algorithm---
+
+	current=0 #index of first node
+	while True: 
+		if current==0: #if node is the beginning
+			graph[current].distance=0
+			graph[current].visit_status=1
+		for n in graph[current].neighbors: #checks distances between neighbors of current node
+			if graph[n].visit_status==0:
+				graph[n].previous=current
+				temp_distance=sqrt( (graph[current].vertex[0]-graph[n].vertex[0])**2 + (graph[current].vertex[1]-graph[n].vertex[1])**2 ) + graph[current].distance	
+				if graph[n].distance > temp_distance:
+					graph[n].distance=temp_distance
+		distance=[]
+		index=[]
+		ind=0
+		for node in graph: #Saves currently unvisited distances with associated indices
+			if node.visit_status==0:
+				distance.append((node.distance))
+				index.append(ind)
+			ind+=1
+		current=index[distance.index(min(distance))] #Sets next node to index with lowest distance that is also unvisited
+		graph[current].visit_status=1
+		if current==len(graph)-1: #if current is the last index, then we're done!
+			break
+
+	#----This second section saves the shortest path----------
+	
+	shortest_path=[graph[len(graph)-1].vertex] #last vertex first
+	current=len(graph)-1
+	while True: #goes through stack of vertices and places them in shortest_path
+		current=graph[current].previous
+		if current==0:
+			break
+		shortest_path.append(graph[current].vertex)
+	shortest_path.reverse()
+	return(shortest_path)
 
     def goTo(self, destination, obstacles):
         self.path = self.findPath(self.generateMap(destination, obstacles))
