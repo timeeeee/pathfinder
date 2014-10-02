@@ -10,3 +10,8 @@ class Node:
 		self.previous = "undef" #Saves index of previous node to help keep track of path.
 		self.visit_status = 0 #0 means unvisited. 1 mean visited.  
 
+	def __str__(self):
+		return "Node(" + str(self.vertex) + ", " + str(self.neighbors) + ")"
+
+	def __repr__(self):
+		return str(self)
