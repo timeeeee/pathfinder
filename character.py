@@ -1,7 +1,7 @@
-from math import sqrt
 import pygame
-
-# this could potentially be a subclass of Sprite
+from node import Node
+from math import sqrt
+from itertools import combinations
 
 class Character:
     def __init__(self, location):
@@ -19,15 +19,20 @@ class Character:
     # first vertex is start location, last vertex is destination
     def generateMap(self, destination, obstacleList):
         # placeholder, return a graph with a single edge from start to destination
-        return [(self.location, [1]),
-                (destination, [0])]
+        vertices = [self.location] + sum([obstacle.getVertices() for obstacle in obstacleList], []) + [self.destination]
+        nodes = []
+        for index in range(len(vertices)):
+            neighbors = range(len(vertices))
+            neighbors.remove(index)
+            nodes.append(Node(vertices[index], neighbors))
+        return nodes
 
     # findPath returns list of destinations on the shortest path from
     # first to last vertex of a map.
     def findPath(self, graph):
         # placeholder, currently just returns list of last vertex
         # so the character will just travel in a straight line
-        return [graph[-1][0]]
+        return [(100,100)]
 
     def goTo(self, destination, obstacles):
         self.path = self.findPath(self.generateMap(destination, obstacles))
