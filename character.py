@@ -10,6 +10,21 @@ class Character:
         self.speed = 400
         self.destination = location
         self.path = []
+        self.rect = pygame.Rect(0,0,5,5)
+        self.rect.center = self.location
+        self.xVelocity = 0; self.yVelocity = 0
+
+    def accelerateUp(self):
+        self.yVelocity = min(-1, self.yVelocity - 1)
+
+    def accelerateDown(self):
+        self.yVelocity = max(1, self.yVelocity + 1)
+
+    def accelerateRight(self):
+        self.xVelocity = max(1, self.xVelocity + 1)
+
+    def accelerateLeft(self):
+        self.xVelocity = min(-1, self.xVelocity - 1)
 
     def generateMap(self, destination, obstacleList):
         # Creates a list of nodes, with a node for self.location first, and
@@ -64,23 +79,29 @@ class Character:
         self.destination = self.path.pop(0)
 
     def update(self, dTime):
-        # Move towards closest destination. If already there, continue following self.path
+        # If keys are down, move according to key input. Otherwise, move along path.
+
         x, y = self.location
-        destinationX, destinationY = self.destination
-        # We could say "self.location == self.destination" except self.location is probably floats
-        if (x - destinationX)**2 + (y - destinationY)**2 < 2:
-            if self.path: self.destination = self.path.pop(0)
+
+        if self.velocityX or self.velocityY:
+            self.location = (x + self.velocityX * self.speed * dTime, y + self.velocityY * self.speed * dTime)
         else:
-            # move towards destination at self.speed pixels per second
-            vectorX = destinationX - x
-            vectorY = destinationY - y
-            length = sqrt(vectorX**2 + vectorY**2)
-            displacementX = vectorX * self.speed * dTime / length / 1000
-            displacementY = vectorY * self.speed * dTime / length / 1000
-            if abs(displacementX) > abs(vectorX):
-                self.location = self.destination
+            # Move towards closest destination. If already there, continue following self.path
+            destinationX, destinationY = self.destination
+            # We could say "self.location == self.destination" except self.location is probably floats
+            if (x - destinationX)**2 + (y - destinationY)**2 < 2:
+                if self.path: self.destination = self.path.pop(0)
             else:
-                self.location = (x + displacementX, y + displacementY)
+                # move towards destination at self.speed pixels per second
+                vectorX = destinationX - x
+                vectorY = destinationY - y
+                length = sqrt(vectorX**2 + vectorY**2)
+                displacementX = vectorX * self.speed * dTime / length / 1000
+                displacementY = vectorY * self.speed * dTime / length / 1000
+                if abs(displacementX) > abs(vectorX):
+                    self.location = self.destination
+                else:
+                    self.location = (x + displacementX, y + displacementY)
 
     def draw(self, screen):
         # x and y are probably floats
