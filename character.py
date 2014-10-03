@@ -30,46 +30,34 @@ class Character:
     # findPath returns list of destinations on the shortest path from
     # first to last vertex of a map.
     def findPath(self, graph):
-	for x in range(len(graph)):
-		print(graph[x].vertex)
-	print(len(graph))
-        # placeholder, currently just returns list of last vertex
-        # so the character will just travel in a straight line
 
 	#----This first section executes dijkstra's algorithm---
 
 	current=0 #index of first node
-	while True: 
-		if current==0: #if node is the beginning
-			graph[current].distance=0
-			graph[current].visit_status=1
+	graph[current].distance=0 #sets first node's distance to 0
+	graph[current].visit_status=1 #we start at the first node, so it has been visited
+	while current!=len(graph)-1: #continue this loop until the last node
 		for n in graph[current].neighbors: #checks distances between neighbors of current node
-			if graph[n].visit_status==0:
-				temp_distance=sqrt( (graph[current].vertex[0]-graph[n].vertex[0])**2 + (graph[current].vertex[1]-graph[n].vertex[1])**2 ) + graph[current].distance	
-				if graph[n].distance > temp_distance:
+			if graph[n].visit_status==0: #checks neighbor as long as it has not been visited
+				temp_distance=sqrt( (graph[current].vertex[0]-graph[n].vertex[0])**2 + (graph[current].vertex[1]-graph[n].vertex[1])**2 ) + graph[current].distance
+				if graph[n].distance > temp_distance: #changes node's distance value if one calculated is smaller
 					graph[n].distance=temp_distance
 					graph[n].previous=current
-		distance=[]
-		index=[]
-		ind=0
-		for node in graph: #Saves currently unvisited distances with associated indices
-			if node.visit_status==0:
-				distance.append((node.distance))
-				index.append(ind)
-			ind+=1
-		current=index[distance.index(min(distance))] #Sets next node to index with lowest distance that is also unvisited
+
+
+		current_smallest=Node((0,0)) #initialize smallest path value 
+		for node in graph: #loop finds the next node to start from
+			if node.visit_status==0 and node.distance<current_smallest.distance:
+				current_smallest=node
+		current=graph.index(current_smallest)
 		graph[current].visit_status=1
-		if current==len(graph)-1: #if current is the last index, then we're done!
-			break
 
 	#----This second section saves the shortest path----------
 	
 	shortest_path=[graph[len(graph)-1].vertex] #last vertex first
 	current=len(graph)-1
-	while True: #goes through stack of vertices and places them in shortest_path
+	while current!=0: #goes through stack of vertices and places them in shortest_path
 		current=graph[current].previous
-		if current==0:
-			break
 		shortest_path.append(graph[current].vertex)
 	shortest_path.reverse()
 	return(shortest_path)
