@@ -10,6 +10,7 @@ class Character:
         self.speed = 400
         self.destination = location
         self.path = []
+        self.graph = []
 
     def generateMap(self, destination, obstacleList):
         # Creates a list of nodes, with a node for self.location first, and
@@ -22,6 +23,7 @@ class Character:
                 nodes[index1].neighbors.append(index2)
                 nodes[index2].neighbors.append(index1)
 #        print nodes
+        self.graph = nodes
         return nodes
 
     # findPath returns list of destinations on the shortest path from
@@ -83,6 +85,11 @@ class Character:
                 self.location = (x + displacementX, y + displacementY)
 
     def draw(self, screen):
+        # for testing: draw the graph
+        for node in self.graph:
+            for neighbor in node.neighbors:
+                pygame.draw.line(screen, (0, 255, 0), node.vertex, self.graph[neighbor].vertex)
+
         # x and y are probably floats
         x, y = self.location
         pygame.draw.circle(screen, (255, 0, 0), (int(x), int(y)), 4)
