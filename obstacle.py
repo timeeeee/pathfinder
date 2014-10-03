@@ -22,7 +22,7 @@ def collideHorizontal(start1, end1, start2, end2):
 #            print "    s y and obstacle y are the same"
             # overlap if both startx and starty are outside the line, on the same side
             if (start1x <= start2x and end1x <= start2x) or (start1x >= end2x and end1x >= end2x):
-                print collideString(start1, end1, start2, end2)
+#                print collideString(start1, end1, start2, end2)
                 return True
 #            else: print "    ... but they don't overlap"
         return False

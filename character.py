@@ -11,20 +11,17 @@ class Character:
         self.destination = location
         self.path = []
 
-    # Create map creates a map based on character and obstacle locations,
-    # and destination. Format is:
-    # [((vertex1x, vertex1y), [neighbor1index, ...]),
-    #  ((vertex2x, vertex2y), [neighbor1index, ...]) ...]
-    # or: [(locationTuple, neighborList), ...]
-    # first vertex is start location, last vertex is destination
     def generateMap(self, destination, obstacleList):
-        # placeholder, return a graph with a single edge from start to destination
+        # Creates a list of nodes, with a node for self.location first, and
+        # self.destination last. 
         vertices = [self.location] + sum([obstacle.getVertices() for obstacle in obstacleList], []) + [destination]
-        nodes = []
-        for index in range(len(vertices)):
-            neighbors = range(len(vertices))
-            neighbors.remove(index)
-            nodes.append(Node(vertices[index], neighbors))
+        nodes = map(Node, vertices)
+        for index1, index2 in combinations(range(len(nodes)), 2):
+            if not any(obstacle.collideLine(nodes[index1].vertex, nodes[index2].vertex) for obstacle in obstacleList):
+#                print "{}->{} does not collide with any obstacles, connected nodes {}, {}".format(nodes[index1].vertex, nodes[index2].vertex, index1, index2)
+                nodes[index1].neighbors.append(index2)
+                nodes[index2].neighbors.append(index1)
+#        print nodes
         return nodes
 
     # findPath returns list of destinations on the shortest path from
