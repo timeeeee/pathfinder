@@ -72,7 +72,7 @@ class Obstacle(pygame.Rect):
         pygame.draw.rect(screen, (0,0,0), self)
 
     def getVertices(self):
-        inflated = self.inflate(Obstacle.openBuffer + 1, Obstacle.openBuffer + 1)
+        inflated = self.inflate(Obstacle.openBuffer + 2, Obstacle.openBuffer + 2)
         return [inflated.topleft,
                 inflated.topright,
                 inflated.bottomleft,
