@@ -22,7 +22,15 @@ def main():
             elif event.type == KEYDOWN and event.key == K_ESCAPE: return
             elif event.type == MOUSEBUTTONUP and event.button == 1:
                 character.goTo(event.pos, obstacles)
-        character.update(dTime)
+            elif event.type == KEYDOWN and event.key == K_UP: character.accelerateUp()
+            elif event.type == KEYDOWN and event.key == K_DOWN: character.accelerateDown()
+            elif event.type == KEYDOWN and event.key == K_LEFT: character.accelerateLeft()
+            elif event.type == KEYDOWN and event.key == K_RIGHT: character.accelerateRight()
+            elif event.type == KEYUP and event.key == K_UP: character.accelerateDown()
+            elif event.type == KEYUP and event.key == K_DOWN: character.accelerateUp()
+            elif event.type == KEYUP and event.key == K_RIGHT: character.accelerateLeft()
+            elif event.type == KEYUP and event.key == K_LEFT: character.accelerateRight()
+        character.update(dTime, obstacles)
         screen.fill((255, 255, 255))
         for obstacle in obstacles: obstacle.draw(screen)
         character.draw(screen)

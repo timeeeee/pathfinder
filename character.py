@@ -10,21 +10,25 @@ class Character:
         self.speed = 400
         self.destination = location
         self.path = []
-        self.rect = pygame.Rect(0,0,5,5)
-        self.rect.center = self.location
         self.xVelocity = 0; self.yVelocity = 0
+        self.graph = []
+        self.stopped = True
 
     def accelerateUp(self):
-        self.yVelocity = min(-1, self.yVelocity - 1)
+        self.yVelocity -= 1
+        self.stopped = True
 
     def accelerateDown(self):
-        self.yVelocity = max(1, self.yVelocity + 1)
+        self.yVelocity += 1
+        self.stopped = True
 
     def accelerateRight(self):
-        self.xVelocity = max(1, self.xVelocity + 1)
+        self.xVelocity += 1
+        self.stopped = True
 
     def accelerateLeft(self):
-        self.xVelocity = min(-1, self.xVelocity - 1)
+        self.xVelocity -= 1
+        self.stopped = True
 
     def generateMap(self, destination, obstacleList):
         # Creates a list of nodes, with a node for self.location first, and
@@ -37,6 +41,7 @@ class Character:
                 nodes[index1].neighbors.append(index2)
                 nodes[index2].neighbors.append(index1)
 #        print nodes
+        self.graph = nodes
         return nodes
 
     # findPath returns list of destinations on the shortest path from
@@ -77,15 +82,26 @@ class Character:
     def goTo(self, destination, obstacles):
         self.path = self.findPath(self.generateMap(destination, obstacles))
         self.destination = self.path.pop(0)
+        self.stopped = False
 
-    def update(self, dTime):
+    def update(self, dTime, obstacleList):
         # If keys are down, move according to key input. Otherwise, move along path.
 
         x, y = self.location
 
-        if self.velocityX or self.velocityY:
-            self.location = (x + self.velocityX * self.speed * dTime, y + self.velocityY * self.speed * dTime)
-        else:
+        if self.xVelocity or self.yVelocity:
+            displacementX = self.xVelocity * self.speed * dTime / 1000.0
+            displacementY = self.yVelocity * self.speed * dTime / 1000.0
+            if (self.yVelocity and self.xVelocity):
+                displacementX /= sqrt(2)
+                displacementY /= sqrt(2)
+            newLocation = (x + displacementX, y + displacementY);
+            rect = pygame.Rect(0,0,5,5)
+            rect.center = newLocation
+            collision = rect.collidelist([obstacle.getInflated() for obstacle in obstacleList])
+            if collision == -1: self.location = newLocation
+            
+        elif not(self.stopped):
             # Move towards closest destination. If already there, continue following self.path
             destinationX, destinationY = self.destination
             # We could say "self.location == self.destination" except self.location is probably floats
@@ -104,6 +120,13 @@ class Character:
                     self.location = (x + displacementX, y + displacementY)
 
     def draw(self, screen):
+        # for testing: draw the graph
+        ''' 
+        for node in self.graph:
+            for neighbor in node.neighbors:
+                pygame.draw.line(screen, (0, 255, 0), node.vertex, self.graph[neighbor].vertex)
+        '''
+
         # x and y are probably floats
         x, y = self.location
         pygame.draw.circle(screen, (255, 0, 0), (int(x), int(y)), 4)
