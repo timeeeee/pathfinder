@@ -121,11 +121,11 @@ class Character:
 
     def draw(self, screen):
         # for testing: draw the graph
-        ''' 
+
         for node in self.graph:
             for neighbor in node.neighbors:
                 pygame.draw.line(screen, (0, 255, 0), node.vertex, self.graph[neighbor].vertex)
-        '''
+
 
         # x and y are probably floats
         x, y = self.location
