@@ -95,11 +95,27 @@ class Character:
             if (self.yVelocity and self.xVelocity):
                 displacementX /= sqrt(2)
                 displacementY /= sqrt(2)
-            newLocation = (x + displacementX, y + displacementY);
-            rect = pygame.Rect(0,0,5,5)
-            rect.center = newLocation
+
+            rect = pygame.Rect(0, 0, 5, 5)
+
+            # Try to move along x
+
+            # (We are bending over backwards a little here because Rects use
+            # ints internally. Otherwise we could say "rect.move(...)")
+            x += displacementX
+            rect.center = (x, y)
             collision = rect.collidelist([obstacle.getInflated() for obstacle in obstacleList])
-            if collision == -1: self.location = newLocation
+            if collision != -1:  # We hit an object- move the rect back
+                x -= displacementX
+
+            # Try to move along y
+            y += displacementY
+            rect.center = (x, y)
+            collision = rect.collidelist([obstacle.getInflated() for obstacle in obstacleList])
+            if collision != -1:  # We hit an object- move the rect back
+                y -= displacementY
+            
+            self.location = (x, y)
             
         elif not(self.stopped):
             # Move towards closest destination. If already there, continue following self.path
