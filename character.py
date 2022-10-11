@@ -34,8 +34,8 @@ class Character:
         # Creates a list of nodes, with a node for self.location first, and
         # self.destination last. 
         vertices = [self.location] + sum([obstacle.getVertices() for obstacle in obstacleList], []) + [destination]
-        nodes = map(Node, vertices)
-        for index1, index2 in combinations(range(len(nodes)), 2):
+        nodes = list(map(Node, vertices))
+        for index1, index2 in combinations(list(range(len(nodes))), 2):
             if not any(obstacle.collideLine(nodes[index1].vertex, nodes[index2].vertex) for obstacle in obstacleList):
 #                print "{}->{} does not collide with any obstacles, connected nodes {}, {}".format(nodes[index1].vertex, nodes[index2].vertex, index1, index2)
                 nodes[index1].neighbors.append(index2)
@@ -48,36 +48,36 @@ class Character:
     # first to last vertex of a map.
     def findPath(self, graph):
 
-	#----This first section executes dijkstra's algorithm---
+        #----This first section executes dijkstra's algorithm---
 
-	current=0 #index of first node
-	graph[current].distance=0 #sets first node's distance to 0
-	graph[current].visit_status=1 #we start at the first node, so it has been visited
-	while current!=len(graph)-1: #continue this loop until the last node
-		for n in graph[current].neighbors: #checks distances between neighbors of current node
-			if graph[n].visit_status==0: #checks neighbor as long as it has not been visited
-				temp_distance=sqrt( (graph[current].vertex[0]-graph[n].vertex[0])**2 + (graph[current].vertex[1]-graph[n].vertex[1])**2 ) + graph[current].distance
-				if graph[n].distance > temp_distance: #changes node's distance value if one calculated is smaller
-					graph[n].distance=temp_distance
-					graph[n].previous=current
+        current=0 #index of first node
+        graph[current].distance=0 #sets first node's distance to 0
+        graph[current].visit_status=1 #we start at the first node, so it has been visited
+        while current!=len(graph)-1: #continue this loop until the last node
+                for n in graph[current].neighbors: #checks distances between neighbors of current node
+                        if graph[n].visit_status==0: #checks neighbor as long as it has not been visited
+                                temp_distance=sqrt( (graph[current].vertex[0]-graph[n].vertex[0])**2 + (graph[current].vertex[1]-graph[n].vertex[1])**2 ) + graph[current].distance
+                                if graph[n].distance > temp_distance: #changes node's distance value if one calculated is smaller
+                                        graph[n].distance=temp_distance
+                                        graph[n].previous=current
 
 
-		current_smallest=Node((0,0)) #initialize smallest path value 
-		for node in graph: #loop finds the next node to start from
-			if node.visit_status==0 and node.distance<current_smallest.distance:
-				current_smallest=node
-		current=graph.index(current_smallest)
-		graph[current].visit_status=1
+                current_smallest=Node((0,0)) #initialize smallest path value 
+                for node in graph: #loop finds the next node to start from
+                        if node.visit_status==0 and node.distance<current_smallest.distance:
+                                current_smallest=node
+                current=graph.index(current_smallest)
+                graph[current].visit_status=1
 
-	#----This second section saves the shortest path----------
-	
-	shortest_path=[graph[len(graph)-1].vertex] #last vertex first
-	current=len(graph)-1
-	while current!=0: #goes through stack of vertices and places them in shortest_path
-		current=graph[current].previous
-		shortest_path.append(graph[current].vertex)
-	shortest_path.reverse()
-	return(shortest_path)
+        #----This second section saves the shortest path----------
+        
+        shortest_path=[graph[len(graph)-1].vertex] #last vertex first
+        current=len(graph)-1
+        while current!=0: #goes through stack of vertices and places them in shortest_path
+                current=graph[current].previous
+                shortest_path.append(graph[current].vertex)
+        shortest_path.reverse()
+        return(shortest_path)
 
     def goTo(self, destination, obstacles):
         self.path = self.findPath(self.generateMap(destination, obstacles))
