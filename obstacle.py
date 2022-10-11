@@ -98,6 +98,6 @@ class Obstacle(pygame.Rect):
 
 def test():
     o = Obstacle(100, 100, 50, 50)
-    print o.collideLine((50, 140), (150, 40))
+    print(o.collideLine((50, 140), (150, 40)))
 
 if __name__=="__main__": test()
